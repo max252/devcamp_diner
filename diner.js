@@ -23,6 +23,16 @@ class Foods {
     this.foods.push(p);
     return p;
   }
+
+  showMenu() {
+    let text = "Index Name Type Price\n";
+
+    for (let i = 0; i < this.foods.length; i++) {
+      text += `${i} ${this.foods[i].name} ${this.foods[i].type} ${this.foods[i].price}\n`;
+    }
+
+    return text;
+  }
 }
 
 class Orders {
@@ -37,30 +47,24 @@ class Orders {
   addComment(index, comment) {
     this.orders[index]["comment"] = comment;
   }
-}
 
-function showMenu(food) {
-  let text = "Index Name Type Price\n";
-
-  for (let i = 0; i < food.length; i++) {
-    text += `${i} ${food[i].name} ${food[i].type} ${food[i].price}\n`;
+  linkMenu(menu) {
+    this.menu = menu;
   }
 
-  return text;
-}
+  showOrder() {
+    let text = "Index Name Type Price Comment\n";
+    let total = 0;
 
-function showOrder(order, food) {
-  let text = "Index Name Type Price Comment\n";
-  let total = 0;
+    for (let i = 0; i < this.orders.length; i++) {
+      text += `${i} ${this.menu[this.orders[i].index].name} ${this.menu[this.orders[i].index].type} ${this.menu[this.orders[i].index].price} ${this.orders[i].comment}\n`;
+      total += this.menu[this.orders[i].index].price;
+    }
 
-  for (let i = 0; i < order.length; i++) {
-    text += `${i} ${food[order[i].index].name} ${food[order[i].index].type} ${food[order[i].index].price} ${order[i].comment}\n`;
-    total += food[order[i].index].price;
+    text += `Total: ${total}\n`;
+
+    return text;
   }
-
-  text += `Total: ${total}\n`;
-
-  return text;
 }
 
 function showHelp() {
@@ -124,6 +128,7 @@ diner.newFood({
 diner.newFood({ name: "Pancakes with jam", type: "side", price: 108 });
 
 const order = new Orders();
+order.linkMenu(diner.foods);
 
 output(showHelp());
 
@@ -134,12 +139,12 @@ while (loopBool == true) {
 
   switch (choise) {
     case "1": {
-      output(showMenu(diner.foods));
+      output(diner.showMenu());
       break;
     }
 
     case "2": {
-      output(showMenu(diner.foods));
+      output(diner.showMenu());
       let index = input("Select dish index?");
 
       if (checkIndex(index, diner.foods)) {
@@ -152,11 +157,11 @@ while (loopBool == true) {
     }
 
     case "3": {
-      output(showOrder(order.orders, diner.foods));
+      output(order.showOrder(order.orders, diner.foods));
       let index = input("Select the dish index in your order?");
 
       if (checkIndex(index, order.orders)) {
-        let comment = input("comment");
+        let comment = input("Enter a comment");
         order.addComment(Number(index), comment);
       } else {
         output("Error: Incorrect dish index in the order");
@@ -166,7 +171,7 @@ while (loopBool == true) {
     }
 
     case "4": {
-      output(showOrder(order.orders, diner.foods));
+      output(order.showOrder(order.orders, diner.foods));
       break;
     }
 
